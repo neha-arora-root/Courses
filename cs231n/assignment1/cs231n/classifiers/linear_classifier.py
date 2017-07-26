@@ -101,7 +101,7 @@ class LinearClassifier(object):
     # TODO:                                                                   #
     # Implement this method. Store the predicted labels in y_pred.            #
     ###########################################################################
-    y_pred = np.dot(X, self.W.T)
+    y_pred = np.argmax(np.dot(X, self.W), axis=1)
     ###########################################################################
     #                           END OF YOUR CODE                              #
     ###########################################################################
@@ -122,14 +122,7 @@ class LinearClassifier(object):
     - loss as a single float
     - gradient with respect to self.W; an array of the same shape as W
     """
-    
-    [N, D] = X_batch.shape
-    pred = predict(self, X_batch)
-    delta = pred - y_batch
-    deltaLoss = 1/(N) * np.dot(delta, delta.T)
-    regLoss = reg/(2*N) * np.dot(self.W, self.W.T)
-    loss = deltaLoss + regLoss
-    return loss
+    pass
 
 class LinearSVM(LinearClassifier):
   """ A subclass that uses the Multiclass SVM loss function """
