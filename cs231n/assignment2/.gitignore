@@ -1,3 +1,6 @@
+.envsource
+frameworkpython
+*.ipynb_checkpoints
 *.swp
 *.pyc
 .env/*

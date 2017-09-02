@@ -11,5 +11,7 @@ PYTHON=$(which $(readlink .env/bin/python)) # only works with python3
 ENV=`$PYTHON -c "import os; print(os.path.abspath(os.path.join(os.path.dirname(\"$0\"), '..')))"`
 
 # now run Python with the virtualenv set as Python's HOME
+echo $ENV
+echo $PYTHON
 export PYTHONHOME=$ENV
 exec $PYTHON "$@"
