@@ -112,13 +112,12 @@ int main() {
   PrintRUN(test_name_iterative_dfs, test_total);
   dfs_graph.DFSIterative(0);
   test_flag = true;
-  std::vector<int> expected_path_to_2_iterative {0,2};
   std::vector<int> actual_path_to_2_iterative = dfs_graph.Path(2);
-  if (actual_path_to_2_iterative.size() != expected_path_to_2_iterative.size()) {
+  if (actual_path_to_2_iterative.size() != expected_path_to_2.size()) {
     test_flag = false;
   } else {
-    for (int i = 0; i < expected_path_to_2_iterative.size(); i++) {
-      if (expected_path_to_2_iterative[i] != actual_path_to_2_iterative[i]) {
+    for (int i = 0; i < expected_path_to_2.size(); i++) {
+      if (expected_path_to_2[i] != actual_path_to_2_iterative[i]) {
         test_flag = false;
         break;
       }

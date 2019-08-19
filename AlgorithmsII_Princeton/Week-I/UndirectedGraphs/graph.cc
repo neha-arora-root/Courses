@@ -72,7 +72,8 @@ void Graph::DFSIterative(const int node) {
     prev_node = curr_node;
     s.pop();
     visited_[curr_node] = true;
-    for (const int neighbor : adjacency_list_[curr_node]) {
+    for (auto it = adjacency_list_[curr_node].rbegin(); it != adjacency_list_[curr_node].rend(); it++) {
+      int neighbor = *it;
       if (!visited_[neighbor]) {
         s.push(neighbor);
       }
