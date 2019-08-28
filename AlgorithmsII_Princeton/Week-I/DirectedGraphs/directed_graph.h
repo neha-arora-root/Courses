@@ -1,34 +1,14 @@
 #ifndef DIRECTED_GRAPH_H_
 #define DIRECTED_GRAPH_H_
 
-#include <iostream>
+#include "../node.h"
+#include "../edge.h"
 #include <vector>
 #include <stack>
 #include <unordered_set>
 #include <unordered_map>
 
 namespace directed_graph {
-
-class Node {
-  private:
-    std::string id_;
-  public:
-    Node(const std::string id=""): id_(id) {}
-    const std::string& Id() const { return id_; }
-};
-
-class Edge {
-  private:
-    const std::string from_;
-    const std::string to_;
-    const int weight_;
-  public:
-    Edge(const std::string from, const std::string to, const int weight): from_(from), to_(to), weight_(weight) {}
-    const std::string from() const { return from_; }
-    const std::string to() const { return to_; }
-    const int weight() const { return weight_; }
-    void PrintEdge() const { std::cout << from_ << " -> " << to_ << " : (" << weight_ << ")" << std::endl; }
-};
 
 class DirectedGraph {
   private:
