@@ -1,193 +1,113 @@
 #include "graph.h"
+#include "../test_utils.h"
 
-#include <iostream>
-#include <string>
+namespace graph {
 
-void PrintRUN(std::string test_name, int& test_total) {
-  std::cout << "Test for " << test_name << ": RUN" << std::endl;
-  test_total++;
+/**
+* Test graph creation with no vertices and edges.
+*/
+void TestEmptyGraphCreation(testing::Testing& test_suite) {
+	test_suite.init("empty graph: no vertices, no edges");
+	Graph graph;
+	test_suite.test(graph.V() == 0);
+	test_suite.test(graph.E() == 0);
+	test_suite.TestResults();
 }
 
-void PrintOK(std::string test_name, int& test_pass) {
-  test_pass++;
-  std::cout << "Test for " << test_name << ": OK" << std::endl;
-  std::cout << "-------------------------------------------------------------" << std::endl;
+/**
+* Test empty graph creation with set of vertices.
+*/
+void TestGraphCreationWithOnlyVertices(testing::Testing& test_suite) {
+    test_suite.init("empty graph creation with only vertices and no edges");
+    Node a("A"), b("B"), c("C");
+    Graph graph({a, b, c});
+    test_suite.test(graph.V() == 3);
+    test_suite.test(graph.E() == 0);
+    test_suite.TestResults();
 }
 
-void PrintFAIL(std::string test_name, int& test_fail) {
-  test_fail++;
-  std::cout << "Test for " << test_name << ": FAIL" << std::endl;
-  std::cout << "-------------------------------------------------------------" << std::endl;
+/**
+* Test graph creation with list of edges.
+*/
+void TestGraphCreationWithEdges(testing::Testing& test_suite) {
+    test_suite.init("graph creation with edges");
+    Node a("A"), b("B"), c("C");
+    Edge e1(a.Id(), b.Id(), 1), e2(a.Id(), c.Id(), 1);
+    Graph graph({e1, e2});
+    test_suite.test(graph.V() == 3);
+    test_suite.test(graph.E() == 2);
+    test_suite.TestResults();
 }
 
-int main() {
-  std::cout << std::endl << "TEST SUITE FOR DFS IMPLEMENTATION IN GRAPHS" << std::endl << std::endl;
+/**
+* Test path creation between nodes via DFS.
+*/
+void TestPathCreationForNodesWithDFS(testing::Testing& test_suite) {
+	test_suite.init("DFS traversal to find path between nodes");
+    Node a("A"), b("B"), c("C"), d("D"), e("E"), f("F");
+    Edge e1(a.Id(), b.Id(), 1), e2(a.Id(), c.Id(), 1), e3(b.Id(), d.Id(), 1), e4(d.Id(), e.Id(), 1);
+    Graph graph({e1, e2, e3, e4});
+    graph.DFS(a.Id());
+    const std::vector<std::string> expected_path = {"A", "B", "D", "E"};
+    const std::vector<std::string> p1 = graph.GetPath(e.Id());
+    test_suite.test(testing::ComparePaths(p1, expected_path));
+    graph.PrintPath(p1);
+    const std::vector<std::string> p2 = graph.GetPath(a.Id(), e.Id());
+    test_suite.test(testing::ComparePaths(p2, expected_path));
+    graph.PrintPath(p2);
+    const std::vector<std::string> p3 = graph.GetPath(b.Id(), f.Id());
+    graph.PrintPath(p3);
+    test_suite.test(testing::ComparePaths(p3, {}));
+    test_suite.TestResults();
+}
 
-  int test_pass = 0, test_fail = 0, test_total = 0;
+/**
+* Test iterative depth first search traversal implementation.
+*/
+void TestPathCreationForNodesWithDFSIterative(testing::Testing& test_suite) {
+	test_suite.init("Iterative DFS traversal to find path between nodes");
+	Node a("A"), b("B"), c("C"), d("D"), e("E"), f("F");
+    Edge e1(a.Id(), b.Id(), 1), e2(a.Id(), c.Id(), 1), e3(b.Id(), d.Id(), 1), e4(c.Id(), d.Id(), 1), e5(d.Id(), e.Id(), 1), e6(e.Id(), f.Id(), 1), e7(a.Id(), f.Id(), 3);
+    Graph graph({e1, e2, e3, e4, e5, e6, e7});
+    graph.DFSIterative(a.Id());
+    const std::vector<std::string> expected_path = {"A", "B", "E"};
+    const std::vector<std::string> path = graph.GetPath(e.Id());
+    test_suite.test(testing::ComparePaths(path, expected_path));
+    graph.PrintPath(path);
+    test_suite.TestResults();
+}
 
-  /**
-   * Graph creation with empty edges list.
-   */
-  int num = 3;
-  std::string test_name_empty_edges = "empty edges graph creation";
-  std::vector<std::pair<int, int> > empty_edges;
-  Graph empty_edges_graph = Graph(num, empty_edges);
-  PrintRUN(test_name_empty_edges, test_total);
-  empty_edges_graph.PrintGraph();
-  if (empty_edges_graph.V() == num && empty_edges_graph.E() == 0) {
-    PrintOK(test_name_empty_edges, test_pass);
-  } else {
-    PrintFAIL(test_name_empty_edges, test_fail);
-  }
+/**
+* Test path creation between nodes via BFS.
+*/
+void TestPathCreationForNodesWithBFS(testing::Testing& test_suite) {
+    test_suite.init("BFS traversal to find path between nodes");
+    Node a("A"), b("B"), c("C"), d("D"), e("E"), f("F");
+    Edge e1(a.Id(), b.Id(), 1), e2(a.Id(), c.Id(), 1), e3(b.Id(), d.Id(), 1), e4(d.Id(), e.Id(), 1);
+    Graph graph({e1, e2, e3, e4});
+    graph.BFS(a.Id());
+    const std::vector<std::string> expected_path = {"A", "B", "D", "E"};
+    const std::vector<std::string> p1 = graph.GetPath(e.Id());
+    test_suite.test(testing::ComparePaths(p1, expected_path));
+    graph.PrintPath(p1);
+    graph.BFS(b.Id());
+    const std::vector<std::string> p2 = graph.GetPath(f.Id());
+    graph.PrintPath(p2);
+    test_suite.test(testing::ComparePaths(p2, {}));
+    test_suite.TestResults();
+}
 
-  /**
-   * Graph creation with invalid edges.
-   */
-  std::string test_name_invalid_edges = "invalid edges graph creation";
-  std::vector<std::pair<int, int> > edges;
-  edges.push_back(std::make_pair(0,1));
-  edges.push_back(std::make_pair(0,2));
-  edges.push_back(std::make_pair(0,5));
-  edges.push_back(std::make_pair(1,4));
-  edges.push_back(std::make_pair(2,3));
-  PrintRUN(test_name_invalid_edges, test_total);
-  Graph invalid_edges_graph = Graph(4, edges);
-  invalid_edges_graph.PrintGraph();
-  if (invalid_edges_graph.V() == 4 && invalid_edges_graph.E() == 3) {
-    PrintOK(test_name_invalid_edges, test_pass);
-  } else {
-    PrintFAIL(test_name_invalid_edges, test_pass);
-  }
+}  // namespace graph
 
-  /**
-   * Graph creation with valid edges.
-   */
-  std::string test_name_valid_edges = "valid edges graph creation";
-  PrintRUN(test_name_valid_edges, test_total);
-  Graph valid_edges_graph = Graph(6, edges);
-  valid_edges_graph.PrintGraph();
-  if (valid_edges_graph.V() == 6 && valid_edges_graph.E() == 5) {
-    PrintOK(test_name_valid_edges, test_pass);
-  } else {
-    PrintFAIL(test_name_valid_edges, test_pass);
-  }
+int main () {
+  testing::Testing test_suite("UNDIRECTED GRAPHS");
 
-  /**
-   * Test depth first search implementation.
-   */
-  std::string test_name_dfs = "depth first search traversal";
-  PrintRUN(test_name_dfs, test_total);
-  std::vector<std::pair<int, int> > dfs_edges;
-  dfs_edges.push_back(std::make_pair(0,1));
-  dfs_edges.push_back(std::make_pair(1,2));
-  dfs_edges.push_back(std::make_pair(2,0));
-  dfs_edges.push_back(std::make_pair(3,4));
-  Graph dfs_graph(5, dfs_edges);
-  // dfs_graph.PrintGraph();
-  dfs_graph.DFS(0);
-  std::vector<int> expected_path_to_2 {0,1,2};
-  std::vector<int> actual_path_to_2 = dfs_graph.Path(2);
-  bool test_flag = true;
-  if (actual_path_to_2.size() != expected_path_to_2.size()) {
-    test_flag = false;
-  } else {
-    for (int i = 0; i < expected_path_to_2.size(); i++) {
-      if (expected_path_to_2[i] != actual_path_to_2[i]) {
-        test_flag = false;
-        break;
-      }
-    }
-  }
-  dfs_graph.PrintPath(actual_path_to_2);
-  if (test_flag) {
-    PrintOK(test_name_dfs, test_pass);
-  } else {
-    PrintFAIL(test_name_dfs, test_fail);
-  }
+  graph::TestEmptyGraphCreation(test_suite);
+  graph::TestGraphCreationWithOnlyVertices(test_suite);
+  graph::TestGraphCreationWithEdges(test_suite);
+  graph::TestPathCreationForNodesWithDFS(test_suite);
+  graph::TestPathCreationForNodesWithDFSIterative(test_suite);
+  graph::TestPathCreationForNodesWithBFS(test_suite);
 
-  /**
-   * Test iterative depth first search traversal implementation.
-   */
-  std::string test_name_iterative_dfs = "iterative depth first search traversal";
-  PrintRUN(test_name_iterative_dfs, test_total);
-  dfs_graph.DFSIterative(0);
-  test_flag = true;
-  std::vector<int> actual_path_to_2_iterative = dfs_graph.Path(2);
-  if (actual_path_to_2_iterative.size() != expected_path_to_2.size()) {
-    test_flag = false;
-  } else {
-    for (int i = 0; i < expected_path_to_2.size(); i++) {
-      if (expected_path_to_2[i] != actual_path_to_2_iterative[i]) {
-        test_flag = false;
-        break;
-      }
-    }
-  }
-  dfs_graph.PrintPath(actual_path_to_2_iterative);
-  if (test_flag) {
-    PrintOK(test_name_iterative_dfs, test_pass);
-  } else {
-    PrintFAIL(test_name_iterative_dfs, test_fail);
-  }
-
-  /**
-   * Test connected components implementation.
-   */
-  std::string test_name_cc = "connected components";
-  PrintRUN(test_name_cc, test_total);
-  dfs_graph.ConnectedComponents();
-  dfs_graph.PrintConnectedComponents();
-  std::vector<int> actual_cc = dfs_graph.GetConnectedComponents();
-  std::vector<int> expected_cc {0, 0, 0, 1, 1};
-  test_flag = true;
-  if (actual_cc.size() != expected_cc.size()) {
-    test_flag = false;
-  } else {
-    for (int i = 0; i < expected_cc.size(); i++) {
-      if (expected_cc[i] != actual_cc[i]) {
-        test_flag = false;
-        break;
-      }
-    }
-  }
-  if (test_flag) {
-    PrintOK(test_name_cc, test_pass);
-  } else {
-    PrintFAIL(test_name_cc, test_fail);
-  }
-
-  /**
-   * Test BFS implementation.
-   */
-  std::string test_name_bfs = "breadth first search";
-  PrintRUN(test_name_bfs, test_total);
-  dfs_graph.BFS(0);
-  std::vector<int> bfs_path_to_2 = dfs_graph.Path(2);
-  std::vector<int> expected_bfs_path_to_2 {0, 2};
-  test_flag = true;
-  if (bfs_path_to_2.size() != expected_bfs_path_to_2.size()) {
-    test_flag = false;
-  } else {
-    for (int i = 0; i < bfs_path_to_2.size(); i++) {
-      if (bfs_path_to_2[i] != expected_bfs_path_to_2[i]) {
-        test_flag = false;
-        break;
-      }
-    }
-  }
-  dfs_graph.PrintPath(bfs_path_to_2);
-  if (test_flag) {
-    PrintOK(test_name_bfs, test_pass);
-  } else {
-    PrintFAIL(test_name_bfs, test_fail);
-  }
-
-  /**
-   * Print records for total tests, tests that passed and that failed.
-   */
-  std::cout << "Ran total tests: " << test_total << std::endl;
-  std::cout << "Tests Ok: " << test_pass << std::endl;
-  std::cout << "Tests Fail: " << test_fail << std::endl << std::endl;
-
-  return 0;
+  test_suite.PrintStats();
 }

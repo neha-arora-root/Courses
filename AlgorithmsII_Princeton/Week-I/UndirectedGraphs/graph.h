@@ -1,66 +1,90 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
+#include "../node.h"
+#include "../edge.h"
+
 #include <vector>
 #include <utility>
+#include <unordered_set>
+#include <unordered_map>
+
+namespace graph {
 
 class Graph {
-  private:
-    int vertices_, edges_;
-    int dfs_traversal_from_;
-    int bfs_traversal_from_;
-    std::vector<std::vector<int> > adjacency_list_;
-    std::vector<bool> visited_;
-    std::vector<int> path_to_;
-    std::vector<int> connected_components_;
 
-    void reset_();
+  private:
+    std::unordered_map<std::string, std::string> path_to_;
+
+    // Utility method for implementation of DFS.
+    void DFSUtil(const std::string& node_id);
+
+    // Utility method for implementation of BFS.
+    void BFSUtil(const std::string& node_id);
+
+  protected:
+    // Count of vertices in graph.
+    int V_;
+
+    // Count of edges in graph.
+    int E_;
+
+    std::unordered_map<std::string, Node> vertices_;
+    std::unordered_map<std::string, std::vector<std::string>> adjacency_map_;
+    std::unordered_map<std::string, std::unordered_map<std::string, Edge>> edges_;
+    std::unordered_set<std::string> visited_;
 
   public:
-    // Creates graph with number of vertices and edges.
-    Graph(const int V, const std::vector<std::pair<int, int> >& edges);
+  	// Create an empty graph.
+    Graph() { V_ = E_ = 0; }
 
-    // Returns the number of vertices in the graph.
-    int V();
+    // Create an empty graph with the given set of vertices.
+    Graph(const std::vector<Node>& vertices);
 
-    // Returns the number of edges in the graph.
-    int E();
+    // Create a graph with the given set of edges.
+    Graph(const std::vector<Edge>& edges);
 
-    // Adds an edge in the graph between nodes to and from.
-    void AddEdge(int from, int to);
+    // Add vertex to graph.
+    bool AddVertex(const Node& n);
 
-    // Prints the number of vertices and edges in the graph and information for each edge.
-    void PrintGraph();
+    // Add edge to graph.
+    void AddEdge(const Edge& edge);
 
-    // Utility method for implementing depth first search traversal and related routines such as finding path from a given node to other connected nodes and finding the connected components in a graph. 
-    void DFSUtil(const int node, const int marker);
+    // Get count of vertices in graph.
+    int V() { return V_; }
 
-    // Records paths to other nodes in the graph from a given node via depth first search traversal.
-    void DFS(const int node);
+    // Get count of edges in graph.
+    int E() { return E_; }
 
-    // Iterative implementation of depth first search traversal.
-    void DFSIterative(const int node);
+    // Return whether the input node is visited or not.
+    bool visited(const std::string& node_id);
 
-    // Does path exist from the dfs_traversal_from_ node to the required node.
-    bool DoesPathExist(int to);
+    // DFS implementaion.
+    void DFS(const std::string& node_id);
 
-    // Finds path from dfs_traversal_from_ node to the required node, returns empty path if no path is found.
-    std::vector<int> Path(int to);
+    // DFS iterative implementaion.
+    void DFSIterative(const std::string& node_id);
 
-    // Prints the path found in the above case.
-    void PrintPath(const std::vector<int>& path);
+    // BFS implementation.
+    void BFS(const std::string& node_id);
 
-    // Finds connected components in graph.
-    void ConnectedComponents();
+    // If DFS or BFS is run already for a node, then the result for whether or not a path exists to the input node is returned.
+    bool DoesPathExist(const std::string& node_to);
 
-    // Prints connected components by assigning each vertex their respective component.
-    void PrintConnectedComponents();
+    // The result for whether or not a path exists from node_from to node_to is returned.
+    bool DoesPathExist(const std::string& node_from, const std::string& node_to);
 
-    // Returns connected_components list.
-    std::vector<int> GetConnectedComponents();
+    // If DFS or BFS is run already for a node, then the path from input node is returned. A message for non-existent path is returned in case there is no path.
+    std::vector<std::string> GetPath(const std::string& node_to);
 
-    // Records paths to other nodes in the graph from a given node via breadth first search traversal.
-    void BFS(const int node);
+    // The path from node_from to node_to is returned. A message for non-existent path is returned in case there is no path.
+    std::vector<std::string> GetPath(const std::string& node_from, const std::string& node_to);
+
+    // Print the input path.
+    void PrintPath(const std::vector<std::string>& path_nodes) const;
 
 };
+
+}  //  namespace graph
+
 #endif /* GRAPH_H_ */
