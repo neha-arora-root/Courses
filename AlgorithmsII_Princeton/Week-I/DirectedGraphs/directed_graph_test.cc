@@ -1,9 +1,8 @@
 #include "directed_graph.h"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_set>
-#include <unordered_map>
+
+namespace directed_graph {
+
+#define ASSIGN_IF_FALSE(conditional_value, assignee_value) AssignIfFalse(conditional_value, assignee_value)
 
 void run(std::string test_name, int& test_total) {
   std::cout << "Test for " << test_name << ": RUN" << std::endl;
@@ -22,121 +21,157 @@ void fail(std::string test_name, int& test_fail) {
   std::cout << "-----------------------------------------------------------------------------------" << std::endl;
 }
 
+void AssignIfFalse(const bool conditional_value, bool& assignee_value) {
+    if (!conditional_value) {
+        assignee_value = false;
+    }
+}
+
+/**
+* Util function to compare two paths.
+*/
+bool ComparePaths(const std::vector<std::string>& path_1, const std::vector<std::string>& path_2) {
+	if (path_1.size() != path_2.size()) {
+		return false;
+	}
+	for (int i = 0; i < path_1.size(); i++) {
+		if (path_1[i] != path_2[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Test graph creation with no vertices and edges.
+ */
+void TestEmptyGraphCreation(int& test_total, int& test_pass, int& test_fail) {
+	std::string test_name = "empty graph: no vertices, no edges";
+	run(test_name, test_total);
+	DirectedGraph dg;
+	bool test_flag = true;
+	if (dg.V() != 0) {
+		std::cout << "Non-zeros vertices found." << std::endl;
+		test_flag = false;
+	}
+	if (dg.E() != 0) {
+		std::cout << "Non-zeros edges found." << std::endl;
+		test_flag = true;
+	}
+	test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
+}
+
+/**
+ * Test empty graph creation with set of vertices.
+ */
+void TestGraphCreationWithOnlyVertices(int& test_total, int& test_pass, int& test_fail) {
+	std::string test_name = "empty directed graph creation with only vertices and no edges";
+	run(test_name, test_total);
+	bool test_flag = true;
+	Node a("A"), b("B"), c("C");
+	DirectedGraph dg({a, b, c});
+
+	if (dg.V() != 3) {
+	    test_flag = false;
+	    std::cout << "Required vertices = " << 3 << ", Found = " << dg.V() << std::endl;
+	}
+	if (dg.E() != 0) {
+	    test_flag = false;
+	    std::cout << "Required edges = 0, Found = " << dg.E() << std::endl;
+	}
+	test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
+}
+
+/**
+ * Test graph creation with list of edges.
+ */
+void TestGraphCreationWithEdges(int& test_total, int& test_pass, int& test_fail) {
+	std::string test_name = "directed graph creation with edges";
+	run(test_name, test_total);
+	bool test_flag = true;
+	Node a("A"), b("B"), c("C");
+	Edge e1(a.Id(), b.Id(), 1), e2(a.Id(), c.Id(), 1);
+	DirectedGraph dg({e1, e2});
+
+	if (dg.V() != 3) {
+	    test_flag = false;
+	    std::cout << "Required vertices = " << 3 << ", Found = " << dg.V() << std::endl;
+	  }
+	  if (dg.E() != 2) {
+	    test_flag = false;
+	    std::cout << "Required edges = 2, Found = " << dg.E() << std::endl;
+	  }
+	test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
+}
+
+/**
+ * Test path creation between nodes via DFS.
+ */
+void TestPathCreationForNodesWithDFS(int& test_total, int& test_pass, int& test_fail) {
+	std::string test_name = "DFS traversal to find path between nodes";
+	run(test_name, test_total);
+	bool test_flag = true;
+	Node a("A"), b("B"), c("C"), d("D"), e("E"), f("F");
+	Edge e1(a.Id(), b.Id(), 1), e2(a.Id(), c.Id(), 1), e3(b.Id(), d.Id(), 1), e4(d.Id(), e.Id(), 1);
+	DirectedGraph dg({e1, e2, e3, e4});
+	dg.DFS(a.Id());
+	const std::vector<std::string> expected_path = {"A", "B", "D", "E"};
+	const std::vector<std::string> p1 = dg.GetPath(e.Id());
+	ASSIGN_IF_FALSE(ComparePaths(p1, expected_path), test_flag);
+	dg.PrintPath(p1);
+	const std::vector<std::string> p2 = dg.GetPath(a.Id(), e.Id());
+	ASSIGN_IF_FALSE(ComparePaths(p2, expected_path), test_flag);
+	dg.PrintPath(p2);
+	const std::vector<std::string> p3 = dg.GetPath(b.Id(), f.Id());
+	dg.PrintPath(p3);
+	ASSIGN_IF_FALSE(ComparePaths(p3, {}), test_flag);
+
+	test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
+}
+
+/**
+ * Test path creation between nodes via BFS.
+ */
+void TestPathCreationForNodesWithBFS(int& test_total, int& test_pass, int& test_fail) {
+	std::string test_name = "BFS traversal to find path between nodes";
+	run(test_name, test_total);
+	bool test_flag = true;
+	Node a("A"), b("B"), c("C"), d("D"), e("E"), f("F");
+	Edge e1(a.Id(), b.Id(), 1), e2(a.Id(), c.Id(), 1), e3(b.Id(), d.Id(), 1), e4(d.Id(), e.Id(), 1);
+	DirectedGraph dg({e1, e2, e3, e4});
+	dg.BFS(a.Id());
+	const std::vector<std::string> expected_path = {"A", "B", "D", "E"};
+	const std::vector<std::string> p1 = dg.GetPath(e.Id());
+	ASSIGN_IF_FALSE(ComparePaths(p1, expected_path), test_flag);
+	dg.PrintPath(p1);
+	dg.BFS(b.Id());
+	const std::vector<std::string> p2 = dg.GetPath(f.Id());
+	dg.PrintPath(p2);
+	ASSIGN_IF_FALSE(ComparePaths(p2, {}), test_flag);
+
+	test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
+}
+
+/**
+* Print records for total tests, tests that passed and that failed.
+*/
+void PrintStats(int& test_total, int& test_pass, int& test_fail) {
+	std::cout << "Ran total tests: " << test_total << std::endl;
+	std::cout << "Tests Ok: " << test_pass << std::endl;
+	std::cout << "Tests Fail: " << test_fail << std::endl << std::endl;
+}
+
+}  // namespace directed_graph
+
 int main () {
   std::cout << std::endl << "TEST SUITE FOR DIRECTED GRAPHS" << std::endl << std::endl;
 
   int test_pass = 0, test_fail = 0, test_total = 0;
-  bool test_flag = true;
+  directed_graph::TestEmptyGraphCreation(test_total, test_pass, test_fail);
+  directed_graph::TestGraphCreationWithOnlyVertices(test_total, test_pass, test_fail);
+  directed_graph::TestGraphCreationWithEdges(test_total, test_pass, test_fail);
+  directed_graph::TestPathCreationForNodesWithDFS(test_total, test_pass, test_fail);
+  directed_graph::TestPathCreationForNodesWithBFS(test_total, test_pass, test_fail);
 
-  Node a("A"), b("B"), c("C"), d("D"), e("E"), f("F"), g("G"), h("H"), i("I"), j("J"), k("K"), l("L");
-  Edge e1(a.Id(), b.Id(), 5);
-  Edge e2(a.Id(), c.Id(), 3);
-  Edge e3(b.Id(), d.Id(), 2);
-
-  Edge e4(e.Id(), f.Id(), 1);
-  Edge e5(f.Id(), g.Id(), 3);
-  Edge e6(e.Id(), h.Id(), 7);
-  Edge e7(h.Id(), g.Id(), 5);
-  Edge e8(h.Id(), k.Id(), 4);
-  Edge e9(k.Id(), l.Id(), 3);
-
-  Node c1("C1"), c2("C2"), c3("C3");
-  Edge ec1(c1.Id(), c2.Id(), 1), ec2(c2.Id(), c3.Id(), 1), ec3(c3.Id(), c1.Id(), 1);
-
-  std::string test_name;
-  /**
-   * Test empty graph creation with set of vertices.
-   */
-  test_name = "empty directed graph creation with only vertices and no edges";
-  std::vector<Node> graph_nodes = std::vector<Node>({a, b, c});
-  DirectedGraph empty_dg = DirectedGraph(graph_nodes);
-  run(test_name, test_total);
-  if (empty_dg.V() != 3) {
-    test_flag = false;
-    std::cout << "Required vertices = " << graph_nodes.size() << ", Found = " << empty_dg.V() << std::endl;
-  }
-  if (empty_dg.E() != 0) {
-    test_flag = false;
-    std::cout << "Required edges = 0, Found = " << empty_dg.E() << std::endl;
-  }
-
-  test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
-  test_flag = true;
-
-  /**
-   * Test graph creation with list of edges.
-   */
-  test_name = "directed graph creation with edges";
-  std::vector<Edge> graph_edges = std::vector<Edge>({e1, e2});
-  DirectedGraph dg = DirectedGraph(graph_edges);
-  run(test_name, test_total);
-  if (dg.V() != 3) {
-    test_flag = false;
-    std::cout << "Required vertices = " << graph_nodes.size()  << ", Found = " << dg.V() << std::endl;
-  }
-  if (dg.E() != 2) {
-    test_flag = false;
-    std::cout << "Required edges = " << graph_edges.size() << ", Found = " << dg.E() << std::endl;
-  }
-
-  test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
-  test_flag = true;
-
-  /**
-   * Test DFS.
-   */
-  test_name = "DFS";
-  run(test_name, test_total);
-  dg.AddEdge(e3);
-  dg.DFS("A");
-  dg.PrintPath("D");
-
-  test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
-  test_flag = true;
-
-  /**
-   * Test topological sorting.
-   */
-  test_name = "topological sorting";
-  std::vector<Edge> graph_edges_2 = std::vector<Edge>({e4, e5, e6, e7, e8, e9});
-  DirectedGraph dg2 = DirectedGraph(graph_edges_2);
-
-  run(test_name, test_total);
-  const auto topological_sort = dg2.TopologicalSort();
-  dg2.PrintPath(topological_sort);
-  std::vector<std::string> expected_order = std::vector<std::string>({"E", "F", "G", "H", "K", "L"});
-  if (expected_order.size() != topological_sort.size()) {
-    test_flag = false;
-  } else {
-    for (int i = 0; i < expected_order.size(); i++) {
-      if (expected_order[i] != topological_sort[i]) {
-        test_flag = false;
-      }
-    }
-  }
-  test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
-  test_flag = true;
-
-  /**
-   */
-  test_name = "topological sort in cyclic graph";
-  run(test_name, test_total);
-  DirectedGraph cyclic_graph = DirectedGraph(std::vector<Edge>({ec1, ec2, ec3}));
-  const auto topological_sort_2 = cyclic_graph.TopologicalSort();
-  if (topological_sort_2.size() != 0) {
-    test_flag = false;
-  }
-  test_flag? ok(test_name, test_pass) : fail(test_name, test_fail);
-  test_flag = true;
-
-  /**
-   * Print records for total tests, tests that passed and that failed.
-   */
-  std::cout << "Ran total tests: " << test_total << std::endl;
-  std::cout << "Tests Ok: " << test_pass << std::endl;
-  std::cout << "Tests Fail: " << test_fail << std::endl << std::endl;
-
-  return 0;
+  directed_graph::PrintStats(test_total, test_pass, test_fail);
 }
-
-

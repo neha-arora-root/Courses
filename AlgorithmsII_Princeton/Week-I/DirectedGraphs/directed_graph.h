@@ -7,6 +7,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+namespace directed_graph {
+
 class Node {
   private:
     std::string id_;
@@ -25,34 +27,38 @@ class Edge {
     const std::string from() const { return from_; }
     const std::string to() const { return to_; }
     const int weight() const { return weight_; }
+    void PrintEdge() const { std::cout << from_ << " -> " << to_ << " : (" << weight_ << ")" << std::endl; }
 };
 
 class DirectedGraph {
   private:
+    std::unordered_map<std::string, std::string> path_to_;
+
+    // Utility method for implementation of DFS.
+    void DFSUtil(const std::string& node_id);
+
+    // Utility method for implementation of BFS.
+    void BFSUtil(const std::string& node_id);
+
+  protected:
     int V_, E_;
     std::unordered_map<std::string, Node> vertices_;
     std::unordered_map<std::string, std::vector<std::string>> adjacency_map_;
-    std::unordered_map<std::string, bool> visited_;
-    std::unordered_map<std::string, std::string> path_to_;
-
-    // Utility function for DFS.
-    void DFSUtil(const std::string& node_id);
-
-    // Find post order traversal from DFS.
-    std::stack<std::string> PostOrderFromDFS();
-
-    // Get reverse adjacency map.
-    std::unordered_map<std::string, std::vector<std::string> > GetReverseAdjacencyMap();
+    std::unordered_map<std::string, std::unordered_map<std::string, Edge>> edges_;
+    std::unordered_set<std::string> visited_;
 
   public:
     // Create an empty graph.
     DirectedGraph() { V_ = E_ = 0; }
 
     // Create an empty graph with the given set of vertices.
-    DirectedGraph(const std::vector<Node>& vertices);
+    DirectedGraph(const std::vector<Node> vertices);
 
     // Create a graph with the given set of edges.
-    DirectedGraph(const std::vector<Edge>& edges);
+    DirectedGraph(const std::vector<Edge> edges);
+
+    // Add vertex to graph.
+    bool AddVertex(const Node& n);
 
     // Add edge to graph.
     void AddEdge(const Edge& edge);
@@ -63,31 +69,31 @@ class DirectedGraph {
     // Get count of edges.
     int E() { return E_; }
 
-    // Depth first search traversal.
+    // DFS implementaion.
     void DFS(const std::string& node_id);
 
-    // Get Path.
-    //std::vector<std::string> Path() { return path_to_; }
+    // BFS implementation.
+    void BFS(const std::string& node_id);
 
-    // Does path exist to node j?
-    bool DoesPathExist(const std::string& node_id);
+    // If DFS or BFS is run already for a node, then the result for whether or not a path exists to the input node is returned.
+    bool DoesPathExist(const std::string& node_to);
 
-    // Print path to node j.
-    void PrintPath(const std::string& node_id);
+    // The result for whether or not a path exists from node_from to node_to is returned.
+    bool DoesPathExist(const std::string& node_from, const std::string& node_to);
 
-    // Print path when a vector of nodes is input.
+    // If DFS or BFS is run already for a node, then the path from input node is returned. A message for non-existent path is returned in case there is no path.
+    std::vector<std::string> GetPath(const std::string& node_to);
+
+    // The path from node_from to node_to is returned. A message for non-existent path is returned in case there is no path.
+    std::vector<std::string> GetPath(const std::string& node_from, const std::string& node_to);
+
+    // Print the input path.
     void PrintPath(const std::vector<std::string>& path_nodes) const;
 
-    // Print all paths.
-    void PrintAllPaths(const std::vector<std::vector<std::string> >& all_paths) const;
-
-    // Check cyclicity.
-    const bool IsCyclic();
-
-    // Topological sorting.
-    const std::vector<std::string > TopologicalSort();
+    // Print all the edges in the graph.
+    void PrintAllEdges() const;
 };
 
+}  // namespace directed_graph
 
-
-#endif /* GRAPH_H */
+#endif /* DIRECTED_GRAPH_H_ */
