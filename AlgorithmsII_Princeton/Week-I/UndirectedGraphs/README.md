@@ -17,9 +17,7 @@ This repository covers
 
 3)  Implementation of the following for a given graph <sub>G(V, E)</sub>:
 *  Diameter: If <i>d<sub>(i,j)</sub></i> denotes the shortest distance between nodes <i>i</i> and <i>j</i>, then diameter of the graph is the largest distance among all shortest distances between two nodes in the graph
-<br>
-<center><i> diam(G) = max<sub>(u,v&isin;V)</sub>d<sub>u,v</sub></i></center>
-<br>
+<p align="center"><i> diam(G) = max<sub>(u,v&isin;V)</sub>d<sub>u,v</sub></i></p>
 
 
 Compile and run code
