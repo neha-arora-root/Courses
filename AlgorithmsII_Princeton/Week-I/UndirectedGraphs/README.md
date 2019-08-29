@@ -13,7 +13,7 @@ This repository covers
 *  BFS
 *  Method call to determine if path exists between two nodes
 
-2)  Implementation for connected components that extends base graph implementation
+2)  Implementation for finding connected components and printing these
 
 
 Compile and run code
