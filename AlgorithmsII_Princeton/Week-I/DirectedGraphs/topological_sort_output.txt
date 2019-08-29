@@ -1,0 +1,14 @@
+
+TEST SUITE FOR TEST SUITE FOR DIRECTED GRAPHS
+
+Test for test cycle in graph: RUN
+Test for test cycle in graph: OK
+----------------------------------------------------------------------------------
+Test for test topological sorting in graph: RUN
+E, A, C, B, D, F, G
+Test for test topological sorting in graph: OK
+----------------------------------------------------------------------------------
+Tests Run  : 2
+Tests Ok   : 2
+Tests Fail : 0
+

@@ -1,0 +1,27 @@
+
+TEST SUITE FOR DIRECTED GRAPHS
+
+Test for empty graph: no vertices, no edges: RUN
+Test for empty graph: no vertices, no edges: OK
+----------------------------------------------------------------------------------
+Test for empty directed graph creation with only vertices and no edges: RUN
+Test for empty directed graph creation with only vertices and no edges: OK
+----------------------------------------------------------------------------------
+Test for directed graph creation with edges: RUN
+Test for directed graph creation with edges: OK
+----------------------------------------------------------------------------------
+Test for DFS traversal to find path between nodes: RUN
+A -> B -> D -> E
+A -> B -> D -> E
+No nodes in the path.
+Test for DFS traversal to find path between nodes: OK
+----------------------------------------------------------------------------------
+Test for BFS traversal to find path between nodes: RUN
+A -> B -> D -> E
+No nodes in the path.
+Test for BFS traversal to find path between nodes: OK
+----------------------------------------------------------------------------------
+Tests Run  : 5
+Tests Ok   : 5
+Tests Fail : 0
+

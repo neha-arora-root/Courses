@@ -32,10 +32,10 @@ class DirectedGraph {
     DirectedGraph() { V_ = E_ = 0; }
 
     // Create an empty graph with the given set of vertices.
-    DirectedGraph(const std::vector<Node> vertices);
+    DirectedGraph(const std::vector<Node>& vertices);
 
     // Create a graph with the given set of edges.
-    DirectedGraph(const std::vector<Edge> edges);
+    DirectedGraph(const std::vector<Edge>& edges);
 
     // Add vertex to graph.
     bool AddVertex(const Node& n);
