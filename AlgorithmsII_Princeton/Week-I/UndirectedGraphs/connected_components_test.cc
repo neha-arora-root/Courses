@@ -4,7 +4,7 @@
 namespace graph {
 
 	void TestConnectedComponents(testing::Testing& test_suite) {
-		test_suite.init("DFS traversal to find path between nodes");
+		test_suite.init("DFS traversal to find connected components");
 	    Node a("A"), b("B"), c("C"), d("D"), e("E"), f("F"), g("G"), h("H");
 	    Edge e1(a.Id(), b.Id(), 1), e2(b.Id(), c.Id(), 1), e3(c.Id(), a.Id(), 1), e4(d.Id(), e.Id(), 1), e5(e.Id(), f.Id(), 1), e6(f.Id(), d.Id(), 1), e7(f.Id(), g.Id(), 1);
 	    ConnectedComponents graph({e1, e2, e3, e4, e5, e6, e7});
